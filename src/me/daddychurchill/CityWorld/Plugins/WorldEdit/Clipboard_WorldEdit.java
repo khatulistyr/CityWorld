@@ -10,9 +10,11 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.util.Direction;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,7 +28,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
 public class Clipboard_WorldEdit extends Clipboard {
-	private BaseBlock[][][][] blocks;
+	private ClipboardHolder[] clipboards = new ClipboardHolder[4];
 	private int facingCount;
 	private boolean flipableX = false;
 	private boolean flipableZ = false;
@@ -77,12 +79,16 @@ public class Clipboard_WorldEdit extends Clipboard {
 
 		if (this.sizeX == 16 && this.sizeZ == 16) {
 			this.shematic = shematic;
+			if(flip(Direction.SOUTH, shematic) == null) System.out.println("höööh null");
+			this.clipboards[0] = flip(Direction.SOUTH, shematic);
+			this.clipboards[1] = flip(Direction.WEST, shematic);
+			this.clipboards[2] = flip(Direction.NORTH, shematic);
+			this.clipboards[3] = flip(Direction.EAST, shematic);
 		}
 
 		try {
 			metaYaml.save(metaFile);
 		} catch (IOException e) {
-
 			generator.reportException("[WorldEdit] Could not resave " + metaFile.getAbsolutePath(), e);
 		}
 	}
@@ -108,12 +114,22 @@ public class Clipboard_WorldEdit extends Clipboard {
                 break;
             }
             default: {
+            	//east
                 result = 3;
                 break;
             }
         }
         return Math.min(this.facingCount - 1, result);
     }
+	
+	public ClipboardHolder flip(Direction direction, com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
+		ClipboardHolder holder =  new ClipboardHolder(clipboard);
+		AffineTransform transform = new AffineTransform();
+		transform.apply(direction.toVector());
+		holder.getClipboard().setOrigin(holder.getClipboard().getMinimumPoint());
+		holder.setTransform(holder.getTransform().combine(transform));
+		return holder;
+	}
 
 	public void paste(CityWorldGenerator generator, RealBlocks chunk, BlockFace facing, int blockX, int blockY,
 			int blockZ) {
@@ -126,13 +142,15 @@ public class Clipboard_WorldEdit extends Clipboard {
 	}
 
 	private void place(CityWorldGenerator generator, int facing, Vector pos, boolean noAir) throws MaxChangedBlocksException {
-		if (Objects.isNull(this.shematic)) return;
+		if (Objects.isNull(this.clipboards) || this.clipboards.length < facing) return;
 		try (EditSession editSession = getEditSession(generator)){
 			System.out.println(pos.toString());
-			final Operation operation = new ClipboardHolder(this.shematic)
+			final Operation operation = this.clipboards[facing]
 						.createPaste(editSession)
 						.to(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))
 						.ignoreAirBlocks(noAir)
+						.copyBiomes(false)
+						.copyEntities(true)
 						.build();
 			Operations.complete(operation);
 		}catch (Exception e) {
