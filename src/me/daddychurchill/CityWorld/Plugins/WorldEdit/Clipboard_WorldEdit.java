@@ -128,6 +128,7 @@ public class Clipboard_WorldEdit extends Clipboard {
 	private void place(CityWorldGenerator generator, int facing, Vector pos, boolean noAir) throws MaxChangedBlocksException {
 		if (Objects.isNull(this.shematic)) return;
 		try (EditSession editSession = getEditSession(generator)){
+			System.out.println(pos.toString());
 			final Operation operation = new ClipboardHolder(this.shematic)
 						.createPaste(editSession)
 						.to(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))

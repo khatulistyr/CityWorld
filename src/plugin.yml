@@ -1,0 +1,45 @@
+name: CityWorld
+main: me.daddychurchill.CityWorld.CityWorld
+version: 4.100
+api-version: 1.14
+load: STARTUP
+author: DaddyChurchill
+website: https://www.spigotmc.org/resources/cityworld.2250/
+description: The great outdoors is all good and fine but sometimes you just want to go to town.
+softdepend: [WorldEdit]
+loadbefore: [Multiverse-Core, dimension-door, multiworld]
+database: false
+prefix: CityWorld
+commands:
+  cityworld:
+    description: Teleports you to/from the default CityWorld
+    usage: /cityworld [leave] [normal|destroyed|maze|astral|sanddunes|snowdunes|flooded|floating|nature|metro] [normal|nether|the_end]
+    permission: cityworld.command
+  citychunk:
+    description: Performs specific maintenance on chunks of CityWorld
+    usage: /citychunk regen | clean [chunkradius]
+    permission: citychunk.command
+  cityinfo:
+    description: Describes the current chunk
+    usage: /cityinfo
+    permission: cityinfo.command
+permissions:
+  cityworld.*:
+    description: Gives access to all CityWorld commands
+    children:
+      cityworld.command: true
+      cityworld.create: true
+      citychunk.command: true
+      cityinfo.command: true
+  cityworld.command:
+    description: Allows users to enter and exit the default CityWorld
+    default: op
+  cityworld.create:
+    description: Allows users to create the default CityWorld if it doesn't exist when the user enters it
+    default: op
+  citychunk.command:
+    description: Allows users to regenerate or cleanup world chunks
+    default: op
+  cityinfo.command:
+    description: Allows users to get chunk info
+    default: op
