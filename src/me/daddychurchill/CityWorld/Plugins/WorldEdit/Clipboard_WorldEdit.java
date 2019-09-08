@@ -29,7 +29,7 @@ import org.bukkit.util.Vector;
 
 public class Clipboard_WorldEdit extends Clipboard {
 	private ClipboardHolder[] clipboards = new ClipboardHolder[4];
-	private int facingCount;
+	private int facingCount = 1;
 	private boolean flipableX = false;
 	private boolean flipableZ = false;
 	private static final String metaExtension = ".yml";
@@ -76,10 +76,14 @@ public class Clipboard_WorldEdit extends Clipboard {
 		this.sizeX = r.getWidth();
 		this.sizeZ = r.getLength();
 		this.sizeY = r.getHeight();
-
+		
+		this.facingCount = 1;
+		if (flipableX) this.facingCount *= 2;
+		if (flipableZ) this.facingCount *= 2;
+		
+		if(Objects.isNull(this.clipboards)) this.clipboards = new ClipboardHolder[4];
 		if (this.sizeX == 16 && this.sizeZ == 16) {
 			this.shematic = shematic;
-			if(flip(Direction.SOUTH, shematic) == null) System.out.println("höööh null");
 			this.clipboards[0] = flip(Direction.SOUTH, shematic);
 			this.clipboards[1] = flip(Direction.WEST, shematic);
 			this.clipboards[2] = flip(Direction.NORTH, shematic);
@@ -98,29 +102,25 @@ public class Clipboard_WorldEdit extends Clipboard {
 				this.blockCount);
 	}
 
-	private int getFacingIndex(final BlockFace facing) {
-        int result = 0;
-        switch (facing) {
-            case SOUTH: {
-                result = 0;
-                break;
-            }
-            case WEST: {
-                result = 1;
-                break;
-            }
-            case NORTH: {
-                result = 2;
-                break;
-            }
-            default: {
-            	//east
-                result = 3;
-                break;
-            }
-        }
-        return Math.min(this.facingCount - 1, result);
-    }
+	private int getFacingIndex(BlockFace facing) {
+		int result = 0;
+		switch (facing) {
+		case SOUTH:
+			result = 0;
+			break;
+		case WEST:
+			result = 1;
+			break;
+		case NORTH:
+			result = 2;
+			break;
+		default: // case EAST:
+			result = 3; // TODO: This was 2 for some reason... shouldn't it have been 3????
+			break;
+		}
+		return Math.min(facingCount, result);
+	}
+
 	
 	public ClipboardHolder flip(Direction direction, com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
 		ClipboardHolder holder =  new ClipboardHolder(clipboard);
@@ -135,6 +135,7 @@ public class Clipboard_WorldEdit extends Clipboard {
 			int blockZ) {
 		Vector at = new Vector(blockX, blockY, blockZ);
 		try {
+			System.out.println(facing.name());
 			place(generator, getFacingIndex(facing), at, true);
 		} catch (Exception e) {
 			generator.reportException("[WorldEdit] Place schematic " + this.name + " at " + at + " failed", e);
@@ -143,8 +144,11 @@ public class Clipboard_WorldEdit extends Clipboard {
 
 	private void place(CityWorldGenerator generator, int facing, Vector pos, boolean noAir) throws MaxChangedBlocksException {
 		if (Objects.isNull(this.clipboards) || this.clipboards.length < facing) return;
+		System.out.println(facing);
 		try (EditSession editSession = getEditSession(generator)){
 			System.out.println(pos.toString());
+			if(editSession == null) System.out.println("EditSession = null");
+			if(Objects.isNull(this.clipboards[facing])) System.out.println("Holder = null ["+facing+"]");
 			final Operation operation = this.clipboards[facing]
 						.createPaste(editSession)
 						.to(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))
