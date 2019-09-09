@@ -11,6 +11,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.Direction;
@@ -30,7 +31,7 @@ import org.bukkit.util.Vector;
 
 public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.Clipboard {
 	
-	private List<Clipboard> schematic = new ArrayList<Clipboard>();
+	private List<Clipboard> schematic;
 	private int facingCount = 1;
 	private boolean flipableX = false;
 	private boolean flipableZ = false;
@@ -41,22 +42,16 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 	private static final String tagOddsOfAppearance = "OddsOfAppearance";
 	private static final String tagBroadcastLocation = "BroadcastLocation";
 	private static final String tagDecayable = "Decayable";
-	
-	private Clipboard clipboard;
 
+	/*
+	 * The variables need to initialize int the load method 
+	 */
+	
 	public Clipboard_WorldEdit(CityWorldGenerator generator, File file) throws Exception {
 		super(generator, file);
-		/*
-		 * PasteProvider_WorldEdit.java:87
-		 * https://github.com/echurchill/CityWorld/blob/0f83e7162e6cd845887bcaa52b1135f351cca87c/src/me/daddychurchill/CityWorld/Plugins/WorldEdit/PasteProvider_WorldEdit.java#L87
-		 */
 	}
 
 	public void load(CityWorldGenerator generator, File file) throws Exception {
-		/*
-		 * me/daddychurchill/CityWorld/Clipboard/Clipboard.java:45
-		 * https://github.com/echurchill/CityWorld/blob/0f83e7162e6cd845887bcaa52b1135f351cca87c/src/me/daddychurchill/CityWorld/Clipboard/Clipboard.java#L45
-		 */
 		YamlConfiguration metaYaml = new YamlConfiguration();
 		metaYaml.options().header("CityWorld/WorldEdit schematic configuration");
 		metaYaml.options().copyDefaults(true);
@@ -82,6 +77,7 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 		Clipboard shematic = (new SchematicLoadTask(file)).call();
 		ClipboardHolder holder = new ClipboardHolder(shematic);
 		Region r = holder.getClipboard().getRegion();
+		
 		this.sizeX = r.getWidth();
 		this.sizeZ = r.getLength();
 		this.sizeY = r.getHeight();
@@ -90,24 +86,16 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 		if (flipableX) this.facingCount *= 2;
 		if (flipableZ) this.facingCount *= 2;
 		
-		if(Objects.isNull(this.schematic)) this.schematic = new ArrayList<Clipboard>();
+		this.schematic = new ArrayList<Clipboard>();
+		
 		if (this.sizeX == 16 && this.sizeZ == 16) {
-			System.out.println("add schematic");
-//			if(Objects.isNull(flip(Direction.SOUTH, shematic))) System.out.println("output null");;
-//			this.schematic.add(shematic);
-			
-			/*
-			 * Hier wird die Flip shematic hinzugefugt für jede Himmelsrichtung
-			 */
-//			this.schematic.add(flip(Direction.SOUTH, shematic));
-//			this.schematic.add(flip(Direction.WEST, shematic));
-//			this.schematic.add(flip(Direction.NORTH, shematic));
-//			this.schematic.add(flip(Direction.EAST, shematic));
-//			this.schematic.add(flip(Direction.SOUTH, shematic));
-//			System.out.println(this.schematic.size());
+			this.schematic.add(flip(Direction.SOUTH, shematic));
+			this.schematic.add(flip(Direction.WEST, shematic));
+			this.schematic.add(flip(Direction.NORTH, shematic));
+			this.schematic.add(flip(Direction.EAST, shematic));
+			this.schematic.add(flip(Direction.SOUTH, shematic));
 		}
 		
-		this.clipboard = shematic;
 		try {
 			metaYaml.save(metaFile);
 		} catch (IOException e) {
@@ -115,9 +103,9 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 		}
 	}
 
-//	private EditSession getEditSession(CityWorldGenerator generator) {
-//		return WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(generator.getWorld()),this.blockCount);
-//	}
+	private EditSession getEditSession(CityWorldGenerator generator) {
+		return WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(generator.getWorld()),this.blockCount);
+	}
 
 	private int getFacingIndex(BlockFace facing) {
 		int result = 0;
@@ -141,11 +129,11 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 	
 	public Clipboard flip(Direction direction, Clipboard clipboard) {
 		ClipboardHolder holder =  new ClipboardHolder(clipboard);
-		//AffineTransform transform = new AffineTransform();
-		//transform.apply(direction.toVector());
-		//holder.getClipboard().setOrigin(holder.getClipboard().getMinimumPoint());
-		//holder.setTransform(holder.getTransform().combine(transform));
-		return clipboard;
+		AffineTransform transform = new AffineTransform();
+		transform.apply(direction.toVector());
+		holder.getClipboard().setOrigin(holder.getClipboard().getMinimumPoint());
+		holder.setTransform(holder.getTransform().combine(transform));
+		return holder.getClipboard();
 	}
 
 	public void paste(CityWorldGenerator generator, RealBlocks chunk, BlockFace facing, int blockX, int blockY,int blockZ) {
@@ -158,22 +146,19 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 	}
 
 	private void place(CityWorldGenerator generator, int facing, Vector pos, boolean noAir) throws MaxChangedBlocksException {
-		//if (Objects.isNull(this.schematic)) {System.out.println("this.schematic == null");return;}
-		//if (this.schematic.isEmpty()) {System.out.println("this.schematic.isEmpty");return;}
-		//if (facing >= this.schematic.size()) {System.out.println("facing >= " + this.schematic.size());return;}
-		System.out.println("New Place Started");
-		try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(generator.getWorld()), -1)){
-			System.out.println("Vector: " + pos.toString());
-			if(editSession == null) System.out.println("EditSession = null");
-			//if(Objects.isNull(this.schematic.get(facing))) System.out.println("Holder = null ["+facing+"]");
-			final Operation operation = new ClipboardHolder(this.clipboard)
+		if (Objects.isNull(this.schematic)) return;
+		if (this.schematic.isEmpty()) return;
+		if (facing >= this.schematic.size()) return;
+		try (EditSession editSession = getEditSession(generator)){
+			final Operation operation = new ClipboardHolder(this.schematic.get(facing))
 						.createPaste(editSession)
-						.to(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))
+						.to(BlockVector3.at(pos.getBlockX(), pos.getBlockY() + this.groundLevelY, pos.getBlockZ()))
 						.ignoreAirBlocks(noAir)
 						.copyBiomes(false)
 						.copyEntities(true)
 						.build();
 			Operations.complete(operation);
+			editSession.setFastMode(true);
 			editSession.flushSession();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -187,13 +172,10 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 			this.file = file;
 		}
 
-		public Clipboard call() {
+		public Clipboard call() throws Exception {
 			ClipboardFormat format = ClipboardFormats.findByFile(file);
 			try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
 			   return reader.read();
-			}catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
 		}
 	}
