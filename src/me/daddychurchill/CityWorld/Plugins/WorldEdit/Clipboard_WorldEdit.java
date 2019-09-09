@@ -4,13 +4,13 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.util.Direction;
@@ -23,15 +23,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import me.daddychurchill.CityWorld.CityWorldGenerator;
-import me.daddychurchill.CityWorld.Clipboard.Clipboard;
 import me.daddychurchill.CityWorld.Support.RealBlocks;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
-public class Clipboard_WorldEdit extends Clipboard {
+public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.Clipboard {
 	
-	private List<com.sk89q.worldedit.extent.clipboard.Clipboard> schematic = new ArrayList<com.sk89q.worldedit.extent.clipboard.Clipboard>();
+	private List<Clipboard> schematic = new ArrayList<Clipboard>();
 	private int facingCount = 1;
 	private boolean flipableX = false;
 	private boolean flipableZ = false;
@@ -42,12 +41,22 @@ public class Clipboard_WorldEdit extends Clipboard {
 	private static final String tagOddsOfAppearance = "OddsOfAppearance";
 	private static final String tagBroadcastLocation = "BroadcastLocation";
 	private static final String tagDecayable = "Decayable";
+	
+	private Clipboard clipboard;
 
 	public Clipboard_WorldEdit(CityWorldGenerator generator, File file) throws Exception {
 		super(generator, file);
+		/*
+		 * PasteProvider_WorldEdit.java:87
+		 * https://github.com/echurchill/CityWorld/blob/0f83e7162e6cd845887bcaa52b1135f351cca87c/src/me/daddychurchill/CityWorld/Plugins/WorldEdit/PasteProvider_WorldEdit.java#L87
+		 */
 	}
 
 	public void load(CityWorldGenerator generator, File file) throws Exception {
+		/*
+		 * me/daddychurchill/CityWorld/Clipboard/Clipboard.java:45
+		 * https://github.com/echurchill/CityWorld/blob/0f83e7162e6cd845887bcaa52b1135f351cca87c/src/me/daddychurchill/CityWorld/Clipboard/Clipboard.java#L45
+		 */
 		YamlConfiguration metaYaml = new YamlConfiguration();
 		metaYaml.options().header("CityWorld/WorldEdit schematic configuration");
 		metaYaml.options().copyDefaults(true);
@@ -70,33 +79,35 @@ public class Clipboard_WorldEdit extends Clipboard {
 			this.decayable = metaYaml.getBoolean("Decayable", this.decayable);
 		}
 
-		com.sk89q.worldedit.extent.clipboard.Clipboard shematic = (new SchematicLoadTask(file)).call();
-		
+		Clipboard shematic = (new SchematicLoadTask(file)).call();
 		ClipboardHolder holder = new ClipboardHolder(shematic);
 		Region r = holder.getClipboard().getRegion();
 		this.sizeX = r.getWidth();
 		this.sizeZ = r.getLength();
 		this.sizeY = r.getHeight();
-		
+		this.blockCount = sizeX * sizeY * sizeZ;
 		this.facingCount = 1;
 		if (flipableX) this.facingCount *= 2;
 		if (flipableZ) this.facingCount *= 2;
 		
-		if(Objects.isNull(this.schematic)) this.schematic = new ArrayList<com.sk89q.worldedit.extent.clipboard.Clipboard>();
+		if(Objects.isNull(this.schematic)) this.schematic = new ArrayList<Clipboard>();
 		if (this.sizeX == 16 && this.sizeZ == 16) {
 			System.out.println("add schematic");
-			if(Objects.isNull(flip(Direction.SOUTH, shematic))) System.out.println("output null");;
+//			if(Objects.isNull(flip(Direction.SOUTH, shematic))) System.out.println("output null");;
 //			this.schematic.add(shematic);
 			
 			/*
 			 * Hier wird die Flip shematic hinzugefugt für jede Himmelsrichtung
 			 */
-			schematic.add(flip(Direction.SOUTH, shematic));
-			schematic.add(flip(Direction.WEST, shematic));
-			schematic.add(flip(Direction.NORTH, shematic));
-			schematic.add(flip(Direction.EAST, shematic));
-			schematic.add(flip(Direction.SOUTH, shematic));
+//			this.schematic.add(flip(Direction.SOUTH, shematic));
+//			this.schematic.add(flip(Direction.WEST, shematic));
+//			this.schematic.add(flip(Direction.NORTH, shematic));
+//			this.schematic.add(flip(Direction.EAST, shematic));
+//			this.schematic.add(flip(Direction.SOUTH, shematic));
+//			System.out.println(this.schematic.size());
 		}
+		
+		this.clipboard = shematic;
 		try {
 			metaYaml.save(metaFile);
 		} catch (IOException e) {
@@ -104,10 +115,9 @@ public class Clipboard_WorldEdit extends Clipboard {
 		}
 	}
 
-	private EditSession getEditSession(CityWorldGenerator generator) {
-		return WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(generator.getWorld()),
-				this.blockCount);
-	}
+//	private EditSession getEditSession(CityWorldGenerator generator) {
+//		return WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(generator.getWorld()),this.blockCount);
+//	}
 
 	private int getFacingIndex(BlockFace facing) {
 		int result = 0;
@@ -129,13 +139,13 @@ public class Clipboard_WorldEdit extends Clipboard {
 	}
 
 	
-	public com.sk89q.worldedit.extent.clipboard.Clipboard flip(Direction direction, com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
+	public Clipboard flip(Direction direction, Clipboard clipboard) {
 		ClipboardHolder holder =  new ClipboardHolder(clipboard);
-		AffineTransform transform = new AffineTransform();
-		transform.apply(direction.toVector());
-		holder.getClipboard().setOrigin(holder.getClipboard().getMinimumPoint());
-		holder.setTransform(holder.getTransform().combine(transform));
-		return holder.getClipboard();
+		//AffineTransform transform = new AffineTransform();
+		//transform.apply(direction.toVector());
+		//holder.getClipboard().setOrigin(holder.getClipboard().getMinimumPoint());
+		//holder.setTransform(holder.getTransform().combine(transform));
+		return clipboard;
 	}
 
 	public void paste(CityWorldGenerator generator, RealBlocks chunk, BlockFace facing, int blockX, int blockY,int blockZ) {
@@ -148,14 +158,15 @@ public class Clipboard_WorldEdit extends Clipboard {
 	}
 
 	private void place(CityWorldGenerator generator, int facing, Vector pos, boolean noAir) throws MaxChangedBlocksException {
-		if (Objects.isNull(this.schematic) || this.schematic.size() < facing) return;
-		System.out.println(facing);
-		System.out.println(this.schematic.size() + " schematic");
-		try (EditSession editSession = getEditSession(generator)){
+		//if (Objects.isNull(this.schematic)) {System.out.println("this.schematic == null");return;}
+		//if (this.schematic.isEmpty()) {System.out.println("this.schematic.isEmpty");return;}
+		//if (facing >= this.schematic.size()) {System.out.println("facing >= " + this.schematic.size());return;}
+		System.out.println("New Place Started");
+		try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(generator.getWorld()), -1)){
 			System.out.println("Vector: " + pos.toString());
 			if(editSession == null) System.out.println("EditSession = null");
-			if(Objects.isNull(this.schematic.get(facing))) System.out.println("Holder = null ["+facing+"]");
-			final Operation operation = new ClipboardHolder(this.schematic.get(0))
+			//if(Objects.isNull(this.schematic.get(facing))) System.out.println("Holder = null ["+facing+"]");
+			final Operation operation = new ClipboardHolder(this.clipboard)
 						.createPaste(editSession)
 						.to(BlockVector3.at(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ()))
 						.ignoreAirBlocks(noAir)
@@ -168,48 +179,18 @@ public class Clipboard_WorldEdit extends Clipboard {
 			e.printStackTrace();
 		}
 	}
-	
-	/*
-	 * [18:31:01 WARN]: java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
-		[18:31:01 WARN]: 	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
-		[18:31:01 WARN]: 	at java.util.ArrayList.get(ArrayList.java:433)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.Plugins.WorldEdit.Clipboard_WorldEdit.place(Clipboard_WorldEdit.java:153)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.Plugins.WorldEdit.Clipboard_WorldEdit.paste(Clipboard_WorldEdit.java:140)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.Plugins.WorldEdit.Clipboard_WorldEdit.paste(Clipboard_WorldEdit.java:189)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.Clipboard.ClipboardLot.generateActualBlocks(ClipboardLot.java:170)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.Plats.PlatLot.generateBlocks(PlatLot.java:211)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.Support.PlatMap.generateBlocks(PlatMap.java:96)
-		[18:31:01 WARN]: 	at me.daddychurchill.CityWorld.CityWorldGenerator$CityWorldBlockPopulator.populate(CityWorldGenerator.java:450)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.Chunk.loadCallback(Chunk.java:660)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.PlayerChunk.lambda$null$7(PlayerChunk.java:415)
-		[18:31:01 WARN]: 	at com.mojang.datafixers.util.Either$Left.ifLeft(Either.java:43)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.PlayerChunk.lambda$a$8(PlayerChunk.java:413)
-		[18:31:01 WARN]: 	at java.util.concurrent.CompletableFuture.uniAccept(CompletableFuture.java:656)
-		[18:31:01 WARN]: 	at java.util.concurrent.CompletableFuture$UniAccept.tryFire(CompletableFuture.java:632)
-		[18:31:01 WARN]: 	at java.util.concurrent.CompletableFuture$Completion.run(CompletableFuture.java:442)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.PlayerChunkMap$CallbackExecutor.run(PlayerChunkMap.java:102)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.ChunkProviderServer$a.executeNext(ChunkProviderServer.java:800)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.ChunkProviderServer.runTasks(ChunkProviderServer.java:426)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.MinecraftServer.aX(MinecraftServer.java:1022)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.MinecraftServer.executeNext(MinecraftServer.java:1006)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.IAsyncTaskHandler.awaitTasks(IAsyncTaskHandler.java:119)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.MinecraftServer.sleepForTick(MinecraftServer.java:990)
-		[18:31:01 WARN]: 	at net.minecraft.server.v1_14_R1.MinecraftServer.run(MinecraftServer.java:923)
-		[18:31:01 WARN]: 	at java.lang.Thread.run(Thread.java:748)
-	 */
 
-	private static class SchematicLoadTask extends Object implements Callable<com.sk89q.worldedit.extent.clipboard.Clipboard> {
+	private static class SchematicLoadTask extends Object implements Callable<Clipboard> {
 		private final File file;
 
 		SchematicLoadTask(File file) {
 			this.file = file;
 		}
 
-		public com.sk89q.worldedit.extent.clipboard.Clipboard call() {
+		public Clipboard call() {
 			ClipboardFormat format = ClipboardFormats.findByFile(file);
 			try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
-			   com.sk89q.worldedit.extent.clipboard.Clipboard clipboard = reader.read();
-			   return clipboard;
+			   return reader.read();
 			}catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -219,6 +200,10 @@ public class Clipboard_WorldEdit extends Clipboard {
 
 	public void paste(CityWorldGenerator generator, RealBlocks chunk, BlockFace facing, int blockX, int blockY,
 			int blockZ, int x1, int x2, int y1, int y2, int z1, int z2) {
+		/*
+		 * me/daddychurchill/CityWorld/Clipboard/ClipboardLot.java:170
+		 * https://github.com/echurchill/CityWorld/blob/0f83e7162e6cd845887bcaa52b1135f351cca87c/src/me/daddychurchill/CityWorld/Clipboard/ClipboardLot.java#L170
+		 */
 		paste(generator, chunk, facing, blockX, blockY, blockZ);
 	}
 }
