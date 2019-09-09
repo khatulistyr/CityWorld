@@ -38,7 +38,6 @@ public abstract class Clipboard {
 	public int edgeRise;
 
 	protected Clipboard(CityWorldGenerator generator, File file) throws Exception {
-		super();
 		this.name = file.getName();
 
 		// grab the data
