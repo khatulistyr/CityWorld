@@ -1,5 +1,8 @@
 package me.daddychurchill.CityWorld.Support;
 
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -110,6 +113,15 @@ public abstract class AbstractBlocks {
 			}
 		}
 	}
+	
+	public final void setBlocks(int x1, int x2, int y1, int y2, int z1, int z2, List<Material> material, Random random) {
+		for (int x = x1; x < x2; x++) {
+			for (int z = z1; z < z2; z++) {
+				for (int y = y1; y < y2; y++)
+					setBlock(x, y, z, material.get(random.nextInt(material.size())));
+			}
+		}
+	}
 
 	public final void setBlocks(int x, int y1, int y2, int z, Material material, Type type) {
 		for (int y = y1; y < y2; y++)
@@ -129,6 +141,15 @@ public abstract class AbstractBlocks {
 			for (int z = z1; z < z2; z++) {
 				for (int y = y1; y < y2; y++)
 					setBlock(x, y, z, material, type);
+			}
+		}
+	}
+	
+	public final void setBlocks(int x1, int x2, int y1, int y2, int z1, int z2, List<Material> material, Random random, Type type) {
+		for (int x = x1; x < x2; x++) {
+			for (int z = z1; z < z2; z++) {
+				for (int y = y1; y < y2; y++)
+					setBlock(x, y, z, material.get(random.nextInt(material.size())), type);
 			}
 		}
 	}
@@ -161,6 +182,14 @@ public abstract class AbstractBlocks {
 		for (int x = x1; x < x2; x++) {
 			for (int z = z1; z < z2; z++) {
 				setBlock(x, y, z, material);
+			}
+		}
+	}
+	
+	public final void setBlocks(int x1, int x2, int y, int z1, int z2, List<Material> material, Random random) {
+		for (int x = x1; x < x2; x++) {
+			for (int z = z1; z < z2; z++) {
+				setBlock(x, y, z, material.get(random.nextInt(material.size())));
 			}
 		}
 	}

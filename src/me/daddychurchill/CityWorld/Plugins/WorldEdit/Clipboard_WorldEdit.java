@@ -182,10 +182,6 @@ public class Clipboard_WorldEdit extends me.daddychurchill.CityWorld.Clipboard.C
 
 	public void paste(CityWorldGenerator generator, RealBlocks chunk, BlockFace facing, int blockX, int blockY,
 			int blockZ, int x1, int x2, int y1, int y2, int z1, int z2) {
-		/*
-		 * me/daddychurchill/CityWorld/Clipboard/ClipboardLot.java:170
-		 * https://github.com/echurchill/CityWorld/blob/0f83e7162e6cd845887bcaa52b1135f351cca87c/src/me/daddychurchill/CityWorld/Clipboard/ClipboardLot.java#L170
-		 */
 		paste(generator, chunk, facing, blockX, blockY, blockZ);
 	}
 }

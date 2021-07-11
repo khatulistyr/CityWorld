@@ -118,7 +118,7 @@ public class FarmLot extends ConnectedLot {
 		chunk.setLayer(generator.streetLevel - 1, 2, generator.oreProvider.surfaceMaterial);
 
 		// in-between bits bits
-		Material dividerMaterial = Material.GRASS_PATH;
+		Material dividerMaterial = Material.DIRT_PATH;
 		if (generator.worldEnvironment == Environment.NETHER) {
 			dividerMaterial = Material.SOUL_SAND;
 		}

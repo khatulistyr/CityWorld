@@ -1,5 +1,9 @@
 package me.daddychurchill.CityWorld.Plats;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.BlockFace;
@@ -37,6 +41,11 @@ public abstract class PlatLot {
 	public boolean trulyIsolated;
 	protected final boolean inACity;
 
+	
+	List<Material> sidewalkMaterial = Arrays.asList(Material.STONE_BRICK_WALL,Material.MOSSY_COBBLESTONE_WALL);
+	
+	private static Random random = new Random();
+	
 	final Material pavementSidewalk;
 	final Material dirtroadSidewalk;
 
@@ -54,7 +63,7 @@ public abstract class PlatLot {
 				Material.STONE_SLAB);
 		// dirt is 3, read in RoadLot
 		dirtroadSidewalk = platmap.generator.materialProvider.itemsMaterialListFor_Roads.getNthMaterial(4,
-				Material.GRASS_PATH);
+				Material.DIRT_PATH);
 
 		initializeDice(platmap, chunkX, chunkZ);
 
@@ -116,10 +125,14 @@ public abstract class PlatLot {
 		else
 			return result;
 	}
+	
+	private Material randomMaterial(List<Material> list) {
+		return list.get(random.nextInt(list.size()));
+	}
 
 	protected Material getSidewalkMaterial() {
 		if (inACity)
-			return pavementSidewalk;
+			return randomMaterial(sidewalkMaterial);
 		else
 			return dirtroadSidewalk;
 	}
