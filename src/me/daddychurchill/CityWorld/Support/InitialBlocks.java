@@ -108,7 +108,7 @@ public final class InitialBlocks extends AbstractBlocks {
 
 	@Override
 	public void setBlock(int x, int y, int z, Material material) {
-		chunkData.setBlock(x, y, z, material);
+		chunkData.setBlock(x, y, z, material.createBlockData());
 	}
 
 	@Override
