@@ -35,7 +35,7 @@ public class SpawnProvider extends Provider {
 			EntityType.CREEPER, EntityType.CREEPER, EntityType.CREEPER, EntityType.SKELETON, EntityType.SKELETON,
 			EntityType.SKELETON, EntityType.SKELETON, EntityType.ZOMBIE, EntityType.ZOMBIE, EntityType.ZOMBIE,
 			EntityType.ZOMBIE, EntityType.ZOMBIE_HORSE, EntityType.ZOMBIE_VILLAGER, EntityType.SPIDER,
-			EntityType.SPIDER, EntityType.SPIDER, EntityType.WITCH, EntityType.WITCH, EntityType.PIG_ZOMBIE,
+			EntityType.SPIDER, EntityType.SPIDER, EntityType.WITCH, EntityType.WITCH, EntityType.HOGLIN,
 			EntityType.ENDERMAN, EntityType.PHANTOM, EntityType.BLAZE);
 
 	private final static String tagEntities_Animals = "Entities_For_Animals";
@@ -75,7 +75,7 @@ public class SpawnProvider extends Provider {
 			EntityType.BAT, EntityType.ENDERMITE, EntityType.CAT);
 
 	private final static String tagEntities_Bunker = "Entities_For_Bunker";
-	public final AbstractEntityList itemsEntities_Bunker = createBeingList(tagEntities_Bunker, EntityType.PIG_ZOMBIE,
+	public final AbstractEntityList itemsEntities_Bunker = createBeingList(tagEntities_Bunker, EntityType.HOGLIN,
 			EntityType.ENDERMAN, EntityType.EVOKER, EntityType.ILLUSIONER, EntityType.BAT, EntityType.BAT,
 			EntityType.BLAZE);
 

@@ -1,5 +1,12 @@
 package me.daddychurchill.CityWorld.Plats;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Random;
+
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected.Half;
@@ -7,6 +14,7 @@ import org.bukkit.block.data.type.Slab.Type;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 
 import me.daddychurchill.CityWorld.CityWorldGenerator;
+import me.daddychurchill.CityWorld.Clipboard.ClipboardStructure;
 import me.daddychurchill.CityWorld.Context.DataContext;
 import me.daddychurchill.CityWorld.Plugins.LootProvider.LootLocation;
 import me.daddychurchill.CityWorld.Support.*;
@@ -40,17 +48,17 @@ public class RoadLot extends ConnectedLot {
 	private final static Material tunnelTileMaterial = Material.SANDSTONE;
 	private final static Material tunnelCeilingMaterial = Material.GLASS;
 
-	private final static Material bridgePavement1Material = Material.BIRCH_SLAB;
-	private final static Material bridgePavement2Material = Material.BIRCH_SLAB;
-	private final static Material bridgeSidewalk1Material = Material.STONE_SLAB;
-	private final static Material bridgeSidewalk2Material = Material.STONE_SLAB;
+	//private final static Material bridgesidewalkMaterial = Material.BIRCH_SLAB;
+	//private final static Material bridgesidewalkMaterial = Material.BIRCH_SLAB;
+	//private final static Material bridgeSidewalk1Material = Material.STONE_SLAB;
+	//private final static Material bridgeSidewalk2Material = Material.STONE_SLAB;
 	protected final static Material bridgeEdgeMaterial = Material.SMOOTH_STONE;
-	private final static Material bridgeRailMaterial = Material.SPRUCE_FENCE;
+	private final static Material bridgeRailMaterial = Material.DARK_OAK_FENCE;
 
 	private final Material pavementMat;
 	private final Material linesMat;
 	private final boolean pavementIsClay;
-	private final static Material pavementClay = Material.CYAN_TERRACOTTA;
+	//private final static Material pavementClay = Material.CYAN_TERRACOTTA;
 	//	protected final static DyeColor crosswalkColor = DyeColor.YELLOW;
 	private final Material dirtroadMat;
 	private final static Material dirtroadClay = Material.LIME_TERRACOTTA;
@@ -60,7 +68,21 @@ public class RoadLot extends ConnectedLot {
 	private final int bottomOfRoad;
 	private int topOfRoad;
 	private final static int sewerDepth = 32;
-
+	
+	List<Material> roadMaterials = Arrays.asList(Material.POLISHED_BLACKSTONE,Material.CRACKED_POLISHED_BLACKSTONE_BRICKS,Material.BLACKSTONE);
+	List<Material> sidewalkMaterial = Arrays.asList(Material.STONE_BRICK_SLAB,Material.MOSSY_STONE_BRICK_SLAB);
+	
+	List<Material> bridgeMaterials = Arrays.asList(Material.POLISHED_BLACKSTONE,Material.CRACKED_POLISHED_BLACKSTONE_BRICKS,Material.BLACKSTONE);
+	List<Material> bridgeMaterials2 = Arrays.asList(Material.POLISHED_BLACKSTONE_SLAB,Material.BLACKSTONE_SLAB);
+	List<Material> bridgesidewalkMaterial = Arrays.asList(Material.STONE_BRICK_SLAB,Material.MOSSY_STONE_BRICK_SLAB);
+	
+	private static Random random = new Random();
+	private static ClipboardStructure lightPost = new ClipboardStructure(new File(new File("plugins/CityWorld/Schematics for diceland/Roadshematic"), "lightpost.schem"));
+	
+	private Material randomMaterial(List<Material> list) {
+		return list.get(random.nextInt(list.size()));
+	}
+	
 	public RoadLot(PlatMap platmap, int chunkX, int chunkZ, long globalconnectionkey, boolean roundaboutPart) {
 		super(platmap, chunkX, chunkZ);
 
@@ -81,7 +103,7 @@ public class RoadLot extends ConnectedLot {
 				Material.QUARTZ_BLOCK);
 		// paved sidewalk is 2, read in PlatLot
 		dirtroadMat = platmap.generator.materialProvider.itemsMaterialListFor_Roads.getNthMaterial(3,
-				Material.GRASS_PATH);
+				Material.DIRT_PATH);
 		// dirt sidewalk is 4, read in PlatLot
 
 		pavementIsClay = pavementMat == Material.WHITE_TERRACOTTA;
@@ -109,7 +131,7 @@ public class RoadLot extends ConnectedLot {
 		return (blockY < bottomOfRoad - sewerDepth || blockY > topOfRoad + 16)
 				&& super.isShaftableLevel(generator, blockY);
 	}
-
+	
 	private boolean sewerCenterBit;
 	private boolean sewerNorthWestBias;
 	private boolean sewerNorthEastBias;
@@ -179,34 +201,34 @@ public class RoadLot extends ConnectedLot {
 		if (inACity) {
 
 			// cross beam
-			chunk.setBlocks(x, x + 2, baseY - 1, baseY, 0, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY - 1, baseY, 0, 16, bridgeMaterials, random);
 
 			// edges
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 0, 1, bridgeEdgeMaterial);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 15, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 0, 1, bridgeMaterials, random);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 15, 16, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 0, 1, bridgeRailMaterial, BlockFace.EAST, BlockFace.WEST);
 			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 15, 16, bridgeRailMaterial, BlockFace.EAST, BlockFace.WEST);
 
 			// sidewalks
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeSidewalk2Material, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeMaterials2, random, Type.DOUBLE);
 		}
 
 		// pavement
-		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgePavement1Material);
+		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgesidewalkMaterial, random);
 	}
 
 	private void placeEWBridgePartAE(AbstractBlocks chunk, int x, int baseY) {
 		if (inACity) {
 
 			// cross beam
-			chunk.setBlocks(x, x + 2, baseY - 1, baseY, 0, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY - 1, baseY, 0, 16, bridgeMaterials, random);
 
 			// edges
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 0, 1, bridgeEdgeMaterial);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 15, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 0, 1, bridgeMaterials, random);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 15, 16, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(x, baseY + 1, 0, bridgeRailMaterial, BlockFace.EAST, BlockFace.WEST);
@@ -215,23 +237,23 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(x + 1, baseY + 1, 15, bridgeRailMaterial, BlockFace.WEST);
 
 			// sidewalks
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeSidewalk2Material, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeMaterials2, random, Type.DOUBLE);
 		}
 
 		// pavement
-		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgePavement1Material);
+		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgesidewalkMaterial, random);
 	}
 
 	private void placeEWBridgePartAW(AbstractBlocks chunk, int x, int baseY) {
 		if (inACity) {
 
 			// cross beam
-			chunk.setBlocks(x, x + 2, baseY - 1, baseY, 0, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY - 1, baseY, 0, 16, bridgeMaterials, random);
 
 			// edges
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 0, 1, bridgeEdgeMaterial);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 15, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 0, 1, bridgeMaterials, random);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 15, 16, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(x, baseY + 1, 0, bridgeRailMaterial, BlockFace.EAST);
@@ -240,20 +262,20 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(x + 1, baseY + 1, 15, bridgeRailMaterial, BlockFace.EAST, BlockFace.WEST);
 
 			// sidewalks
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeSidewalk2Material, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeMaterials2, random, Type.DOUBLE);
 		}
 
 		// pavement
-		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgePavement1Material);
+		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgesidewalkMaterial, random);
 	}
 
 	private void placeEWBridgePartBE(AbstractBlocks chunk, int x, int baseY) {
 		if (inACity) {
 
 			// edges
-			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 0, 1, bridgeEdgeMaterial);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 15, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 0, 1, bridgeMaterials, random);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 15, 16, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(x, baseY + 2, 0, bridgeRailMaterial, BlockFace.EAST, BlockFace.WEST);
@@ -262,22 +284,22 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(x + 1, baseY + 2, 15, bridgeRailMaterial, BlockFace.WEST);
 
 			// sidewalks
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 1, 3, bridgeSidewalk1Material);
-			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 13, 15, bridgeSidewalk1Material);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 1, 3, bridgeMaterials2, random);
+			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 13, 15, bridgeMaterials2, random);
 		}
 
 		// pavement
-		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgePavement2Material, Type.DOUBLE);
+		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgesidewalkMaterial, random, Type.DOUBLE);
 	}
 
 	private void placeEWBridgePartBW(AbstractBlocks chunk, int x, int baseY) {
 		if (inACity) {
 
 			// edges
-			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 0, 1, bridgeEdgeMaterial);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 15, 16, bridgeEdgeMaterial);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 0, 1, bridgeMaterials, random);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 2, 15, 16, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(x, baseY + 2, 0, bridgeRailMaterial, BlockFace.EAST);
@@ -286,24 +308,24 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(x + 1, baseY + 2, 15, bridgeRailMaterial, BlockFace.EAST, BlockFace.WEST);
 
 			// sidewalks
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 1, 3, bridgeSidewalk1Material);
-			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 13, 15, bridgeSidewalk1Material);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 1, 3, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY, baseY + 1, 13, 15, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 1, 3, bridgeMaterials2, random);
+			chunk.setBlocks(x, x + 2, baseY + 1, baseY + 2, 13, 15, bridgeMaterials2, random);
 		}
 
 		// pavement
-		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgePavement2Material, Type.DOUBLE);
+		chunk.setBlocks(x, x + 2, baseY, baseY + 1, 3, 13, bridgesidewalkMaterial, random, Type.DOUBLE);
 	}
 
 	private void placeWBridgeColumns(AbstractBlocks chunk, int baseY) {
-		chunk.setBlocks(0, 1, blockYs.getMinHeight(), baseY, 2, 4, bridgeEdgeMaterial);
-		chunk.setBlocks(0, 1, blockYs.getMinHeight(), baseY, 12, 14, bridgeEdgeMaterial);
+		chunk.setBlocks(0, 1, blockYs.getMinHeight(), baseY, 2, 4, bridgeMaterials, random);
+		chunk.setBlocks(0, 1, blockYs.getMinHeight(), baseY, 12, 14, bridgeMaterials, random);
 	}
 
 	private void placeEBridgeColumns(AbstractBlocks chunk, int baseY) {
-		chunk.setBlocks(15, 16, blockYs.getMinHeight(), baseY, 2, 4, bridgeEdgeMaterial);
-		chunk.setBlocks(15, 16, blockYs.getMinHeight(), baseY, 12, 14, bridgeEdgeMaterial);
+		chunk.setBlocks(15, 16, blockYs.getMinHeight(), baseY, 2, 4, bridgeMaterials, random);
+		chunk.setBlocks(15, 16, blockYs.getMinHeight(), baseY, 12, 14, bridgeMaterials, random);
 	}
 
 	private void placeNSBridgeCap(AbstractBlocks chunk, int z, int baseY, int topY) {
@@ -316,11 +338,11 @@ public class RoadLot extends ConnectedLot {
 		if (inACity) {
 
 			// cross beam
-			chunk.setBlocks(0, 16, baseY - 1, baseY, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 16, baseY - 1, baseY, z, z + 2, bridgeMaterials, random);
 
 			// edges
-			chunk.setBlocks(0, 1, baseY, baseY + 1, z, z + 2, bridgeEdgeMaterial);
-			chunk.setBlocks(15, 16, baseY, baseY + 1, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 1, baseY, baseY + 1, z, z + 2, bridgeMaterials, random);
+			chunk.setBlocks(15, 16, baseY, baseY + 1, z, z + 2, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlocks(0, 1, baseY + 1, baseY + 2, z, z + 2, bridgeRailMaterial, BlockFace.NORTH, BlockFace.SOUTH);
@@ -328,23 +350,23 @@ public class RoadLot extends ConnectedLot {
 					BlockFace.SOUTH);
 
 			// sidewalks
-			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
+			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
 		}
 
 		// pavement
-		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgePavement1Material);
+		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgesidewalkMaterial, random);
 	}
 
 	private void placeNSBridgePartAN(AbstractBlocks chunk, int z, int baseY) {
 		if (inACity) {
 
 			// cross beam
-			chunk.setBlocks(0, 16, baseY - 1, baseY, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 16, baseY - 1, baseY, z, z + 2, bridgeMaterials, random);
 
 			// edges
-			chunk.setBlocks(0, 1, baseY, baseY + 1, z, z + 2, bridgeEdgeMaterial);
-			chunk.setBlocks(15, 16, baseY, baseY + 1, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 1, baseY, baseY + 1, z, z + 2, bridgeMaterials, random);
+			chunk.setBlocks(15, 16, baseY, baseY + 1, z, z + 2, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(0, baseY + 1, z, bridgeRailMaterial, BlockFace.SOUTH);
@@ -353,23 +375,23 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(15, baseY + 1, z + 1, bridgeRailMaterial, BlockFace.NORTH, BlockFace.SOUTH);
 
 			// sidewalks
-			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
+			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
 		}
 
 		// pavement
-		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgePavement1Material);
+		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgesidewalkMaterial, random);
 	}
 
 	private void placeNSBridgePartAS(AbstractBlocks chunk, int z, int baseY) {
 		if (inACity) {
 
 			// cross beam
-			chunk.setBlocks(0, 16, baseY - 1, baseY, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 16, baseY - 1, baseY, z, z + 2, bridgeMaterials, random);
 
 			// edges
-			chunk.setBlocks(0, 1, baseY, baseY + 1, z, z + 2, bridgeEdgeMaterial);
-			chunk.setBlocks(15, 16, baseY, baseY + 1, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 1, baseY, baseY + 1, z, z + 2, bridgeMaterials, random);
+			chunk.setBlocks(15, 16, baseY, baseY + 1, z, z + 2, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(0, baseY + 1, z, bridgeRailMaterial, BlockFace.NORTH, BlockFace.SOUTH);
@@ -378,20 +400,20 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(15, baseY + 1, z + 1, bridgeRailMaterial, BlockFace.NORTH);
 
 			// sidewalks
-			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
+			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
 		}
 
 		// pavement
-		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgePavement1Material);
+		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgesidewalkMaterial, random);
 	}
 
 	private void placeNSBridgePartBN(AbstractBlocks chunk, int z, int baseY) {
 		if (inACity) {
 
 			// edges
-			chunk.setBlocks(0, 1, baseY, baseY + 2, z, z + 2, bridgeEdgeMaterial);
-			chunk.setBlocks(15, 16, baseY, baseY + 2, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 1, baseY, baseY + 2, z, z + 2, bridgeMaterials, random);
+			chunk.setBlocks(15, 16, baseY, baseY + 2, z, z + 2, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(0, baseY + 2, z, bridgeRailMaterial, BlockFace.SOUTH);
@@ -400,22 +422,22 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(15, baseY + 2, z + 1, bridgeRailMaterial, BlockFace.NORTH, BlockFace.SOUTH);
 
 			// sidewalks
-			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(1, 3, baseY + 1, baseY + 2, z, z + 2, bridgeSidewalk1Material);
-			chunk.setBlocks(13, 15, baseY + 1, baseY + 2, z, z + 2, bridgeSidewalk1Material);
+			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(1, 3, baseY + 1, baseY + 2, z, z + 2, bridgeMaterials2, random);
+			chunk.setBlocks(13, 15, baseY + 1, baseY + 2, z, z + 2, bridgeMaterials2, random);
 		}
 
 		// pavement
-		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgePavement2Material, Type.DOUBLE);
+		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgesidewalkMaterial, random, Type.DOUBLE);
 	}
 
 	private void placeNSBridgePartBS(AbstractBlocks chunk, int z, int baseY) {
 		if (inACity) {
 
 			// edges
-			chunk.setBlocks(0, 1, baseY, baseY + 2, z, z + 2, bridgeEdgeMaterial);
-			chunk.setBlocks(15, 16, baseY, baseY + 2, z, z + 2, bridgeEdgeMaterial);
+			chunk.setBlocks(0, 1, baseY, baseY + 2, z, z + 2, bridgeMaterials, random);
+			chunk.setBlocks(15, 16, baseY, baseY + 2, z, z + 2, bridgeMaterials, random);
 
 			// rails
 			chunk.setBlock(0, baseY + 2, z, bridgeRailMaterial, BlockFace.NORTH, BlockFace.SOUTH);
@@ -424,24 +446,24 @@ public class RoadLot extends ConnectedLot {
 			chunk.setBlock(15, baseY + 2, z + 1, bridgeRailMaterial, BlockFace.NORTH);
 
 			// sidewalks
-			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeSidewalk2Material, Type.DOUBLE);
-			chunk.setBlocks(1, 3, baseY + 1, baseY + 2, z, z + 2, bridgeSidewalk1Material);
-			chunk.setBlocks(13, 15, baseY + 1, baseY + 2, z, z + 2, bridgeSidewalk1Material);
+			chunk.setBlocks(1, 3, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(13, 15, baseY, baseY + 1, z, z + 2, bridgeMaterials2, random, Type.DOUBLE);
+			chunk.setBlocks(1, 3, baseY + 1, baseY + 2, z, z + 2, bridgeMaterials2, random);
+			chunk.setBlocks(13, 15, baseY + 1, baseY + 2, z, z + 2, bridgeMaterials2, random);
 		}
 
 		// pavement
-		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgePavement2Material, Type.DOUBLE);
+		chunk.setBlocks(3, 13, baseY, baseY + 1, z, z + 2, bridgesidewalkMaterial, random, Type.DOUBLE);
 	}
 
 	private void placeNBridgeColumns(AbstractBlocks chunk, int baseY) {
-		chunk.setBlocks(2, 4, blockYs.getMinHeight(), baseY, 0, 1, bridgeEdgeMaterial);
-		chunk.setBlocks(12, 14, blockYs.getMinHeight(), baseY, 0, 1, bridgeEdgeMaterial);
+		chunk.setBlocks(2, 4, blockYs.getMinHeight(), baseY, 0, 1, bridgeMaterials, random);
+		chunk.setBlocks(12, 14, blockYs.getMinHeight(), baseY, 0, 1, bridgeMaterials, random);
 	}
 
 	private void placeSBridgeColumns(AbstractBlocks chunk, int baseY) {
-		chunk.setBlocks(2, 4, blockYs.getMinHeight(), baseY, 15, 16, bridgeEdgeMaterial);
-		chunk.setBlocks(12, 14, blockYs.getMinHeight(), baseY, 15, 16, bridgeEdgeMaterial);
+		chunk.setBlocks(2, 4, blockYs.getMinHeight(), baseY, 15, 16, bridgeMaterials, random);
+		chunk.setBlocks(12, 14, blockYs.getMinHeight(), baseY, 15, 16, bridgeMaterials, random);
 	}
 
 	private void placeEWTunnelArch(CityWorldGenerator generator, AbstractBlocks chunk, int x, int baseY,
@@ -693,16 +715,15 @@ public class RoadLot extends ConnectedLot {
 					if (HeightInfo.getHeightsFast(generator, originX - chunk.width, originZ).isSea()
 							&& HeightInfo.getHeightsFast(generator, originX + chunk.width, originZ).isSea()) {
 
-						// lights please
-						generateLightPost(generator, chunk, context, pavementLevel + 6, 7, 0);
-						generateLightPost(generator, chunk, context, pavementLevel + 6, 8, 15);
+						// Bridgelights please here
+						generateLightPost(generator, chunk, context, pavementLevel + 6, 0, 7);//DAS WURDE ANGEPASST
+						generateLightPost(generator, chunk, context, pavementLevel + 6, 15, 8);//DAS WURDE ANGEPASST
 					}
 
 				} else if (roads.toNorth() && roads.toSouth()) {
 					if (HeightInfo.getHeightsFast(generator, originX, originZ - chunk.width).isSea()
 							&& HeightInfo.getHeightsFast(generator, originX, originZ + chunk.width).isSea()) {
-
-						// lights please
+						// Bridgelights please
 						generateLightPost(generator, chunk, context, pavementLevel + 6, 0, 7);
 						generateLightPost(generator, chunk, context, pavementLevel + 6, 15, 8);
 					}
@@ -1405,9 +1426,11 @@ public class RoadLot extends ConnectedLot {
 			int z2, boolean doingFolage, boolean doingTunnel) {
 		if (inACity)
 			if (pavementIsClay)
-				chunk.setBlocks(x1, x2, y, z1, z2, pavementClay);
+				//chunk.setBlocks(x1, x2, y, z1, z2, pavementClay);
+				chunk.setBlocks(x1, x2, y, z1, z2, roadMaterials, random);
 			else
-				chunk.setBlocks(x1, x2, y, z1, z2, pavementMat);
+				//chunk.setBlocks(x1, x2, y, z1, z2, pavementMat);
+				chunk.setBlocks(x1, x2, y, z1, z2, this.roadMaterials, random); //Straßen generation
 		else if (dirtroadIsClay)
 			chunk.setBlocks(x1, x2, y, z1, z2, dirtroadClay);
 		else {
@@ -1429,7 +1452,7 @@ public class RoadLot extends ConnectedLot {
 	protected void paveSidewalk(CityWorldGenerator generator, SupportBlocks chunk, int x1, int x2, int y, int z1,
 			int z2, boolean doingTunnel) {
 		if (inACity)
-			chunk.setBlocks(x1, x2, y, z1, z2, pavementSidewalk);
+			chunk.setBlocks(x1, x2, y, z1, z2, this.sidewalkMaterial, random);
 		else {
 //			if (dirtroadSidewalk == Material.DIRT)
 //				BlackMagic.setBlocks(chunk, x1, x2, y, z1, z2, dirtroadSidewalk, 1); // Coarse dirt
@@ -1445,7 +1468,7 @@ public class RoadLot extends ConnectedLot {
 	private void paveSidewalk(CityWorldGenerator generator, SupportBlocks chunk, int x, int y, int z,
 			boolean doingTunnel) {
 		if (inACity)
-			chunk.setBlock(x, y, z, pavementSidewalk);
+			chunk.setBlock(x, y, z, randomMaterial(sidewalkMaterial));
 		else {
 //			if (dirtroadSidewalk == Material.DIRT)
 //				chunk.setBlock(x, y, z, dirtroadSidewalk, 1); // Coarse dirt
@@ -1556,30 +1579,65 @@ public class RoadLot extends ConnectedLot {
 		if (chunkOdds.flipCoin() && chunk.isEmpty(x1, y, z1) && !chunk.isEmpty(x2, y, z2))
 			chunk.setVine(x1, y, z1, direction);
 	}
-
-	protected boolean generateLightPost(CityWorldGenerator generator, RealBlocks chunk, DataContext context,
-			int sidewalkLevel, int x, int z) {
-		chunk.setBlock(x, sidewalkLevel, z, lightpostbaseMaterial);
-		if (generator.getSettings().includeDecayedRoads) {
-			int y = sidewalkLevel + 1;
-			while (y < sidewalkLevel + lightpostHeight + 1) {
-				if (chunkOdds.playOdds(0.25))
-					break;
-				chunk.setBlock(x, y, z, lightpostMaterial);
-				y++;
+	
+	protected boolean generateLightPost(CityWorldGenerator generator, RealBlocks chunk, DataContext context, int sidewalkLevel, int x, int z) {
+		if(lightPost.canPlace()) {
+			if(chunk.getChunkX() % 2 == 0 && chunk.getChunkZ() % 2 == 0) {
+				int blockX = chunk.getBlockX(x);
+				int blockZ = chunk.getBlockZ(x);
+				lightPost.paste(blockX, sidewalkLevel, blockZ, generator.getWorld(), false);
+			}else if(chunk.getChunkX() % 2 != 0 && chunk.getChunkZ() % 2 != 0) {
+				int blockX = chunk.getBlockX(x);
+				int blockZ = chunk.getBlockZ(x);
+				lightPost.paste(blockX, sidewalkLevel, blockZ, generator.getWorld(), false);
 			}
-			if (y > sidewalkLevel + lightpostHeight) {
-				if (chunkOdds.playOdds(0.75))
-					chunk.setBlock(x, y, z, context.lightMat);
+		}else {
+			chunk.setBlock(x, sidewalkLevel, z, lightpostbaseMaterial);
+			if (generator.getSettings().includeDecayedRoads) {
+				int y = sidewalkLevel + 1;
+				while (y < sidewalkLevel + lightpostHeight + 1) {
+					if (chunkOdds.playOdds(0.25))
+						break;
+					chunk.setBlock(x, y, z, lightpostMaterial);
+					y++;
+				}
+				if (y > sidewalkLevel + lightpostHeight) {
+					if (chunkOdds.playOdds(0.75))
+						chunk.setBlock(x, y, z, context.lightMat);
+					return true;
+				}
+				return false;
+			} else {
+				chunk.setBlocks(x, sidewalkLevel + 1, sidewalkLevel + lightpostHeight + 1, z, lightpostMaterial);
+				chunk.setBlock(x, sidewalkLevel + lightpostHeight + 1, z, context.lightMat);
 				return true;
 			}
-			return false;
-		} else {
-			chunk.setBlocks(x, sidewalkLevel + 1, sidewalkLevel + lightpostHeight + 1, z, lightpostMaterial);
-			chunk.setBlock(x, sidewalkLevel + lightpostHeight + 1, z, context.lightMat);
-			return true;
 		}
+		return true;
 	}
+
+//	protected boolean generateLightPost(CityWorldGenerator generator, RealBlocks chunk, DataContext context, int sidewalkLevel, int x, int z) {
+//		chunk.setBlock(x, sidewalkLevel, z, Material.DIAMOND_BLOCK);
+//		if (generator.getSettings().includeDecayedRoads) {
+//			int y = sidewalkLevel + 1;
+//			while (y < sidewalkLevel + lightpostHeight + 1) {
+//				if (chunkOdds.playOdds(0.25))
+//					break;
+//				chunk.setBlock(x, y, z, lightpostMaterial);
+//				y++;
+//			}
+//			if (y > sidewalkLevel + lightpostHeight) {
+//				if (chunkOdds.playOdds(0.75))
+//					chunk.setBlock(x, y, z, context.lightMat);
+//				return true;
+//			}
+//			return false;
+//		} else {
+//			chunk.setBlocks(x, sidewalkLevel + 1, sidewalkLevel + lightpostHeight + 1, z, lightpostMaterial);
+//			chunk.setBlock(x, sidewalkLevel + lightpostHeight + 1, z, context.lightMat);
+//			return true;
+//		}
+//	}
 
 	private final static double oddsOfDecayedSign = Odds.oddsExtremelyLikely;
 
@@ -1655,7 +1713,6 @@ public class RoadLot extends ConnectedLot {
 			paveSidewalk(generator, chunk, toNorth ? x + 3 : x, sidewalkLevel, z + i, false);
 			paveSidewalk(generator, chunk, x + i, sidewalkLevel, toEast ? z + 3 : z, false);
 		}
-
 		// little notch
 		paveSidewalk(generator, chunk, toNorth ? x + 2 : x + 1, sidewalkLevel, toEast ? z + 2 : z + 1, false);
 	}

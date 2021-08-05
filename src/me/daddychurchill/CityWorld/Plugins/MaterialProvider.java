@@ -487,8 +487,8 @@ public class MaterialProvider {
 			Material.WHITE_TERRACOTTA, // Pavement
 			Material.QUARTZ_BLOCK, // Lines
 			Material.STONE_SLAB, // Sidewalks
-			Material.GRASS_PATH, // Dirt roads
-			Material.GRASS_PATH); // Dirt sidewalks
+			Material.DIRT_PATH, // Dirt roads
+			Material.DIRT_PATH); // Dirt sidewalks
 
 	private final static String tagMaterialListFor_NormalOres = "Materials_List_For_NormalOres";
 	public final MaterialList itemsMaterialListFor_NormalOres = createList(tagMaterialListFor_NormalOres,

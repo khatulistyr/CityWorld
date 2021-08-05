@@ -32,7 +32,7 @@ public class ParkLot extends ConnectedLot {
 	private final static Material fenceMaterial = Material.SPRUCE_FENCE;
 	private final static Material columnMaterial = Material.SMOOTH_STONE;
 	private final static Material grassMaterial = Material.GRASS_BLOCK;
-	private final static Material pathMaterial = Material.GRASS_PATH;
+	private final static Material pathMaterial = Material.DIRT_PATH;
 	private final static Material stepMaterial = Material.STONE_SLAB;
 	private final static Material ledgeMaterial = Material.CLAY;
 
