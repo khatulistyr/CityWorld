@@ -247,6 +247,7 @@ public class CityWorldGenerator extends ChunkGenerator implements CityWorldLog {
 			structureOnGroundProvider = StructureOnGroundProvider.loadProvider(this);
 			structureInAirProvider = StructureInAirProvider.loadProvider(this);
 			treeProvider = TreeProvider.loadProvider(this, new Odds(getRelatedSeed()));
+			
 
 			pasteProvider = PasteProvider.loadProvider(this);
 			decayBlocks = new WorldBlocks(this, new Odds(getRelatedSeed()));
@@ -283,7 +284,6 @@ public class CityWorldGenerator extends ChunkGenerator implements CityWorldLog {
 			// get the connectionKeys
 			connectedKeyForPavedRoads = connectionKeyGen.getRandomLong();
 			connectedKeyForParks = connectionKeyGen.getRandomLong();
-
 //			reportMessage("Plugins...");
 //			PluginManager pm = Bukkit.getServer().getPluginManager();
 //			Plugin[] plugins = pm.getPlugins();
@@ -296,7 +296,6 @@ public class CityWorldGenerator extends ChunkGenerator implements CityWorldLog {
 	@Override
 	public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biome) {
 		try {
-
 			initializeWorldInfo(world);
 			InitialBlocks initialBlocks = new InitialBlocks(this, createChunkData(world), x, z);
 

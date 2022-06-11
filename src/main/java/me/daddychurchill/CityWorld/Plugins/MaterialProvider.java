@@ -503,7 +503,23 @@ public class MaterialProvider {
 			Material.LAPIS_ORE, //
 			Material.REDSTONE_ORE, // be
 			Material.DIAMOND_ORE, //
-			Material.EMERALD_ORE); // least frequent ore
+			Material.EMERALD_ORE,
+			Material.COPPER_ORE,
+			Material.DEEPSLATE_COAL_ORE, // most frequent ore
+			Material.DEEPSLATE_IRON_ORE, //
+			Material.DEEPSLATE_GOLD_ORE, //
+			Material.DEEPSLATE_LAPIS_ORE, //
+			Material.DEEPSLATE_REDSTONE_ORE, // be
+			Material.DEEPSLATE_DIAMOND_ORE, //
+			Material.DEEPSLATE_EMERALD_ORE,
+			Material.DEEPSLATE_COPPER_ORE,
+			Material.CLAY,
+			Material.ANCIENT_DEBRIS,
+			Material.AMETHYST_BLOCK,
+			Material.STONE,
+			Material.DEEPSLATE
+			
+			); // least frequent ore
 
 	private final static String tagMaterialListFor_NetherOres = "Materials_List_For_NetherOres";
 	public final MaterialList itemsMaterialListFor_NetherOres = createList(tagMaterialListFor_NetherOres,

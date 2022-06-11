@@ -226,7 +226,7 @@ public abstract class ShapeProvider extends Provider {
 
 		// make the base
 		chunk.setBlock(x, bottomOfWorld, z, substratumMaterial);
-		chunk.setBlock(x, bottomOfWorld + 1, z, stratumMaterial);
+		chunk.setBlock(x, bottomOfWorld + 1, z, Material.DEEPSLATE);
 
 		// compute the world block coordinates
 		int blockX = chunk.sectionX * chunk.width + x;
@@ -236,7 +236,12 @@ public abstract class ShapeProvider extends Provider {
 		for (int y = bottomOfWorld + 2; y < stratumY; y++)
 			if (lot.isValidStrataY(generator, blockX, y, blockZ)
 					&& generator.shapeProvider.notACave(generator, blockX, y, blockZ))
-				chunk.setBlock(x, y, z, stratumMaterial);
+				if(y > 0) {
+					chunk.setBlock(x, y, z, stratumMaterial);
+				}else {
+					//1.18 filler Material
+					chunk.setBlock(x, y, z, Material.DEEPSLATE);
+				}
 			else if (y <= OreProvider.lavaFieldLevel && generator.getSettings().includeLavaFields)
 				chunk.setBlock(x, y, z, Material.LAVA);
 

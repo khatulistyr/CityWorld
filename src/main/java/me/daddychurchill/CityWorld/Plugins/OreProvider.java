@@ -9,6 +9,7 @@ import org.bukkit.block.Biome;
 import me.daddychurchill.CityWorld.CityWorldGenerator;
 import me.daddychurchill.CityWorld.Plats.PlatLot;
 import me.daddychurchill.CityWorld.Support.AbstractCachedYs;
+import me.daddychurchill.CityWorld.Support.MinWorldHeight;
 import me.daddychurchill.CityWorld.Support.Odds;
 import me.daddychurchill.CityWorld.Support.SupportBlocks;
 
@@ -126,13 +127,113 @@ public abstract class OreProvider extends Provider {
 	 */
 
 	// WATER LAVA GRAV COAL IRON GOLD LAPIS REDST DIAM EMER
-	private static final int[] ore_iterations = new int[] { 8, 6, 40, 30, 12, 4, 2, 4, 2, 10 };
-	private static final int[] ore_amountToDo = new int[] { 1, 1, 12, 8, 8, 3, 3, 10, 3, 1 };
-	private static final int[] ore_maxY = new int[] { 128, 32, 111, 128, 61, 29, 25, 16, 15, 32 };
-	private static final int[] ore_minY = new int[] { 32, 2, 40, 16, 10, 8, 8, 6, 2, 2 };
-	private static final boolean[] ore_upper = new boolean[] { true, false, false, true, true, true, true, true, false, false };
-	private static final boolean[] ore_liquid = new boolean[] { true, true, false, false, false, false, false, false, false,
-			false };
+	private static final int[] ore_iterations = new int[] { 
+			8, // WATER
+			6, // LAVA
+			40, // GRAV
+			30, // COAL
+			12, // IRON
+			4, // GOLD
+			2, // LAPIS
+			4, // REDST
+			2, // DIAM
+			2, // COPPER
+			15, // EMER
+			30, // DEEPSLATE_COAL_ORE
+			12, // DEEPSLATE_IRON_ORE
+			4, // DEEPSLATE_GOLD_ORE
+			2, // DEEPSLATE_LAPIS_ORE
+			4, // DEEPSLATE_REDSTONE_ORE
+			2, // DEEPSLATE_DIAMOND_ORE
+			10, // DEEPSLATE_EMERALD_ORE
+			15 , // DEEPSLATE_COPPER_ORE
+			20, // CLAY
+			1, // ANCIENT_DEBRIS
+			3, // AMETHYST_BLOCK
+			20, // STONE
+			15 // DEEPSLATE
+ 			};
+	
+	private static final int[] ore_amountToDo = new int[] { 
+			1, // WATER
+			1, // LAVA
+			12, // GRAV
+			8, // COAL
+			8, // IRON
+			3, // GOLD
+			3, // LAPIS
+			10, // REDST
+			3, // DIAM
+			1, // EMER
+			8, // COPPER
+			8, 
+			8,
+			3,
+			3, 
+			10,
+			3,
+			1, 
+			8 ,
+			5,
+			2, 
+			3, 
+			15, 
+			20};
+	
+	private static final int[] ore_maxY = new int[] { 
+			128, // WATER
+			32, // LAVA
+			111, // GRAV
+			128, // COAL
+			61, // IRON
+			29, // GOLD
+			25, // LAPIS
+			16, // REDST
+			15, // DIAM
+			15, // EMER
+			94, // COPPER
+			-1, 
+			-25, 
+			-30, 
+			-35, 
+			-40, 
+			-55, 
+			-50, 
+			-5, 
+			5, 
+			-10, 
+			-10,
+			0, 
+			7};
+	
+	private static final int[] ore_minY = new int[] { 
+			32, // WATER
+			2, // LAVA
+			40, // GRAV
+			16, // COAL
+			10, // IRON
+			8, // GOLD
+			8, // LAPIS
+			6, // REDST
+			2, // DIAM
+			2, // EMER
+			0, // COPPER
+			-63, 
+			-63, 
+			-63, 
+			-63, 
+			-63, 
+			-63, 
+			-63, 
+			-63, 
+			-45, 
+			-45, 
+			-30, 
+			-12, 
+			0};
+	
+	private static final boolean[] ore_upper = new boolean[] { true, false, false, true, true, true, true, true, false, false, false, true, true, true, true, true, false, false, false , false, false, false, false, false};
+	private static final boolean[] ore_liquid = new boolean[] { true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false , false, false, false, false, false};
 
 	public void sprinkleOres(CityWorldGenerator generator, PlatLot lot, SupportBlocks chunk, AbstractCachedYs blockYs,
 			Odds odds) {
@@ -149,10 +250,16 @@ public abstract class OreProvider extends Provider {
 	private void sprinkleOre(CityWorldGenerator generator, PlatLot lot, SupportBlocks chunk, AbstractCachedYs blockYs,
 			Odds odds, Material material, int maxY, int minY, int iterations, int amount, boolean mirror,
 			boolean liquid) {
+		
+		if(Material.ANCIENT_DEBRIS == material || Material.AMETHYST_BLOCK == material) {
+			if(odds.calcRandomRange(1, 5) != 1) {
+				return;
+			}
+		}
 
 		// do we do this one?
 		if ((liquid && generator.getSettings().includeUndergroundFluids) || (!liquid && generator.getSettings().includeOres)) {
-			if (material != stratumMaterial) {
+			//if (material != stratumMaterial || material != Material.DEEPSLATE) {
 
 				// sprinkle it around!
 				int range = maxY - minY;
@@ -164,11 +271,13 @@ public abstract class OreProvider extends Provider {
 						growVein(generator, lot, chunk, blockYs, odds, x, y, z, amount, material);
 					if (mirror) {
 						y = (generator.seaLevel + generator.landRange) - minY - odds.getRandomInt(range);
-						if (y < blockYs.getBlockY(x, z))
+						if (y < blockYs.getBlockY(x, z)) {
 							growVein(generator, lot, chunk, blockYs, odds, x, y, z, amount, material);
+						}
+							
 					}
 				}
-			}
+			//}
 		}
 	}
 
@@ -197,7 +306,7 @@ public abstract class OreProvider extends Provider {
 	private int placeOre(CityWorldGenerator generator, SupportBlocks chunk, Odds odds, int centerX, int centerY,
 			int centerZ, int oresToDo, Material material) {
 		int count = 0;
-		if (centerY > 0 && centerY < chunk.height) {
+		if (centerY > MinWorldHeight.getMinHeight() && centerY < chunk.height) {
 			if (placeBlock(chunk, odds, centerX, centerY, centerZ, material)) {
 				count++;
 				if (count < oresToDo && centerX < 15
@@ -217,7 +326,7 @@ public abstract class OreProvider extends Provider {
 
 	private boolean placeBlock(SupportBlocks chunk, Odds odds, int x, int y, int z, Material material) {
 		if (odds.playOdds(oreSprinkleOdds))
-			if (chunk.isType(x, y, z, stratumMaterial)) {
+			if (chunk.isOfTypes(x, y, z, stratumMaterial, Material.DEEPSLATE)) {
 				chunk.setBlock(x, y, z, material);
 				return true;
 			}

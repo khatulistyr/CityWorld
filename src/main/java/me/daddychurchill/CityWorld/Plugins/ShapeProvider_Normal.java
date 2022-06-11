@@ -350,7 +350,7 @@ public class ShapeProvider_Normal extends ShapeProvider {
 
 		// put ores in?
 		lot.generateOres(generator, chunk);
-
+		
 		// do we do it or not?
 		lot.generateMines(generator, chunk);
 	}
