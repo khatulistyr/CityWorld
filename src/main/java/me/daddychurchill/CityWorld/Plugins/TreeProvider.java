@@ -139,6 +139,7 @@ public abstract class TreeProvider {
 		// Figure out the height
 		switch (treeType) {
 		default:
+		case CHERRY:
 		case TREE:
 		case REDWOOD:
 		case BIRCH:
@@ -180,7 +181,9 @@ public abstract class TreeProvider {
 //			trunkMaterial = Material.SPRUCE_LOG;
 //			leavesMaterial = Material.SPRUCE_LEAVES;
 			break;
-
+		case CHERRY:
+			trunkMaterial = Material.CHERRY_LOG;
+			leavesMaterial = Material.CHERRY_LEAVES;
 		case REDWOOD:
 		case TALL_REDWOOD:
 		case MEGA_REDWOOD:
@@ -373,7 +376,7 @@ public abstract class TreeProvider {
 		// Figure out the tree
 		switch (treeType) {
 		default:
-		case TREE:
+		case TREE, CHERRY:
 			trunkHeight = 4;
 
 			leaves1exist = true;
@@ -508,7 +511,10 @@ public abstract class TreeProvider {
 			trunkMaterial = Material.SPRUCE_LOG;
 			leavesMaterial = Material.SPRUCE_LEAVES;
 			break;
-
+		case CHERRY:
+			trunkMaterial = Material.CHERRY_LOG;
+			leavesMaterial = Material.CHERRY_LEAVES;
+			break;
 		case REDWOOD:
 		case TALL_REDWOOD:
 		case MEGA_REDWOOD:

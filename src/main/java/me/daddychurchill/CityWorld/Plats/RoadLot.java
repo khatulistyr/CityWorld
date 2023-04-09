@@ -67,12 +67,21 @@ public class RoadLot extends ConnectedLot {
 	private int topOfRoad;
 	private final static int sewerDepth = 32;
 	
+	/* Dicecraft Default Materials
 	List<Material> roadMaterials = Arrays.asList(Material.POLISHED_BLACKSTONE,Material.CRACKED_POLISHED_BLACKSTONE_BRICKS,Material.BLACKSTONE);
 	List<Material> sidewalkMaterial = Arrays.asList(Material.STONE_BRICK_SLAB,Material.MOSSY_STONE_BRICK_SLAB);
 	
 	List<Material> bridgeMaterials = Arrays.asList(Material.POLISHED_BLACKSTONE,Material.CRACKED_POLISHED_BLACKSTONE_BRICKS,Material.BLACKSTONE);
 	List<Material> bridgeMaterials2 = Arrays.asList(Material.POLISHED_BLACKSTONE_SLAB,Material.BLACKSTONE_SLAB);
 	List<Material> bridgesidewalkMaterial = Arrays.asList(Material.STONE_BRICK_SLAB,Material.MOSSY_STONE_BRICK_SLAB);
+	*/
+	
+	List<Material> roadMaterials = Arrays.asList(Material.DEEPSLATE_TILES,Material.CRACKED_DEEPSLATE_TILES,Material.DEEPSLATE_BRICKS);
+	List<Material> sidewalkMaterial = Arrays.asList(Material.MUD_BRICK_SLAB);
+	
+	List<Material> bridgeMaterials = Arrays.asList(Material.DEEPSLATE_TILES,Material.CRACKED_DEEPSLATE_TILES,Material.DEEPSLATE_BRICKS);
+	List<Material> bridgeMaterials2 = Arrays.asList(Material.MUD_BRICK_SLAB);
+	List<Material> bridgesidewalkMaterial = Arrays.asList(Material.MUD_BRICK_SLAB);
 	
 	private static Random random = new Random();
 	private static ClipboardStructure lightPost = new ClipboardStructure(new File(new File("plugins/CityWorld/Schematics for diceland/Roadshematic"), "lightpost.schem"));

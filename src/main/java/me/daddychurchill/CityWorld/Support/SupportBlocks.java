@@ -77,10 +77,18 @@ public abstract class SupportBlocks extends AbstractBlocks {
 	private void setActualBlock(Block block, Material material, boolean thisDoPhysics) {
 		block.setType(material, thisDoPhysics);
 	}
+	
+	private void setActualBlock(Block block, BlockData blockData, boolean thisDoPhysics) {
+		block.setBlockData(blockData, thisDoPhysics);
+	}
 
 	@Override
 	public final void setBlock(int x, int y, int z, Material material) {
 		setActualBlock(getActualBlock(x, y, z), material, getDoPhysics(x, z));
+	}
+	
+	public final void setBlock(int x, int y, int z, BlockData blockData) {
+		setActualBlock(getActualBlock(x, y, z), blockData, getDoPhysics(x, z));
 	}
 
 	private boolean isType(Block block, Material... types) {

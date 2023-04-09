@@ -64,7 +64,7 @@ public class SurfaceProvider_Normal extends SurfaceProvider {
 					else if (secondary < treeAltOdds)
 						foliage.generateCoverage(generator, chunk, x, y + 1, z, CoverageType.BIRCH_TREE);
 					else
-						foliage.generateCoverage(generator, chunk, x, y + 1, z, CoverageType.OAK_TREE);
+						foliage.generateCoverage(generator, chunk, x, y + 1, z, foliage.getRandomCoverage(CoverProvider.dicecraftTrees));
 
 					// foliage?
 				} else if (primary < foliageOdds) {

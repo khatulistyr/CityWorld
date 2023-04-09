@@ -1,9 +1,13 @@
 package me.daddychurchill.CityWorld.Plugins;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.PinkPetals;
 
 import me.daddychurchill.CityWorld.CityWorldGenerator;
 import me.daddychurchill.CityWorld.Support.Colors.ColorSet;
@@ -16,7 +20,7 @@ public abstract class CoverProvider extends Provider {
 	public enum CoverageType {
 		NOTHING, GRASS, FERN, /* DEAD_GRASS, */ DANDELION, DEAD_BUSH,
 
-		POPPY, BLUE_ORCHID, ALLIUM, AZURE_BLUET, OXEYE_DAISY, RED_TULIP, ORANGE_TULIP, WHITE_TULIP, PINK_TULIP,
+		POPPY, BLUE_ORCHID, ALLIUM, AZURE_BLUET, OXEYE_DAISY, RED_TULIP, ORANGE_TULIP, WHITE_TULIP, PINK_TULIP, PINK_PETALS,
 
 		SUNFLOWER, LILAC, TALL_GRASS, TALL_FERN, ROSE_BUSH, PEONY,
 
@@ -26,7 +30,7 @@ public abstract class CoverProvider extends Provider {
 
 		MINI_OAK_TREE, SHORT_OAK_TREE, OAK_TREE, DARK_OAK_TREE, MINI_PINE_TREE, SHORT_PINE_TREE, PINE_TREE,
 		TALL_PINE_TREE, MINI_BIRCH_TREE, SHORT_BIRCH_TREE, BIRCH_TREE, TALL_BIRCH_TREE, MINI_JUNGLE_TREE,
-		SHORT_JUNGLE_TREE, JUNGLE_TREE, TALL_JUNGLE_TREE, MINI_SWAMP_TREE, SWAMP_TREE, MINI_ACACIA_TREE, ACACIA_TREE,
+		SHORT_JUNGLE_TREE, JUNGLE_TREE, TALL_JUNGLE_TREE, MINI_SWAMP_TREE, SWAMP_TREE, MINI_ACACIA_TREE, ACACIA_TREE, CHERRY_TREE,
 
 		MINI_OAK_TRUNK, OAK_TRUNK, TALL_OAK_TRUNK, MINI_PINE_TRUNK, PINE_TRUNK, TALL_PINE_TRUNK, MINI_BIRCH_TRUNK,
 		BIRCH_TRUNK, TALL_BIRCH_TRUNK, MINI_JUNGLE_TRUNK, JUNGLE_TRUNK, TALL_JUNGLE_TRUNK, MINI_SWAMP_TRUNK,
@@ -60,9 +64,13 @@ public abstract class CoverProvider extends Provider {
 		SEA_PLANTS, SEA_CORALS
 	}
 
+	protected final static CoverageType[] dicecraftTrees = {
+		CoverageType.CHERRY_TREE, CoverageType.OAK_TREE, CoverageType.ACACIA_TREE	
+	};
+	
 	private final static CoverageType[] ShortFlowers = { CoverageType.DANDELION, CoverageType.POPPY,
 			CoverageType.BLUE_ORCHID, CoverageType.ALLIUM, CoverageType.AZURE_BLUET, CoverageType.OXEYE_DAISY,
-			CoverageType.RED_TULIP, CoverageType.ORANGE_TULIP, CoverageType.WHITE_TULIP, CoverageType.PINK_TULIP };
+			CoverageType.RED_TULIP, CoverageType.ORANGE_TULIP, CoverageType.WHITE_TULIP, CoverageType.PINK_TULIP, CoverageType.PINK_PETALS };
 
 	private final static CoverageType[] TallFlowers = { CoverageType.SUNFLOWER, CoverageType.LILAC,
 			CoverageType.ROSE_BUSH, CoverageType.PEONY };
@@ -70,7 +78,7 @@ public abstract class CoverProvider extends Provider {
 	private final static CoverageType[] AllFlowers = { CoverageType.DANDELION, CoverageType.POPPY,
 			CoverageType.BLUE_ORCHID, CoverageType.ALLIUM, CoverageType.AZURE_BLUET, CoverageType.OXEYE_DAISY,
 			CoverageType.RED_TULIP, CoverageType.ORANGE_TULIP, CoverageType.WHITE_TULIP, CoverageType.PINK_TULIP,
-			CoverageType.SUNFLOWER, CoverageType.LILAC, CoverageType.ROSE_BUSH, CoverageType.PEONY };
+			CoverageType.SUNFLOWER, CoverageType.LILAC, CoverageType.ROSE_BUSH, CoverageType.PEONY, CoverageType.PINK_PETALS };
 
 	private final static CoverageType[] ShortPlants = { CoverageType.GRASS, CoverageType.FERN };
 
@@ -155,7 +163,7 @@ public abstract class CoverProvider extends Provider {
 	public abstract void generateCoverage(CityWorldGenerator generator, SupportBlocks chunk, int x, int y, int z,
 			CoverageType coverageType);
 
-	private CoverageType getRandomCoverage(CoverageType... types) {
+	public CoverageType getRandomCoverage(CoverageType... types) {
 		return types[odds.getRandomInt(types.length)];
 	}
 
@@ -251,12 +259,33 @@ public abstract class CoverProvider extends Provider {
 			break;
 		}
 	}
+	
+	private BlockData generateRandomFlowers(Material material) {
+		final BlockData blockData = material.createBlockData();
+		
+		switch (material) {
+			case PINK_PETALS: {
+				PinkPetals petals = PinkPetals.class.cast(blockData);
+				final int random = ThreadLocalRandom.current().nextInt(petals.getMaximumFlowerAmount() - 1) + 1;
+				petals.setFlowerAmount(random);
+			}
+			default : {
+				
+			}
+		}
+		
+		return blockData;
+	}
 
 	void setCoverage(CityWorldGenerator generator, SupportBlocks chunk, int x, int y, int z,
 			CoverageType coverageType) {
 		Material topsoil = generator.oreProvider.surfaceMaterial;
 		switch (coverageType) {
 		case NOTHING:
+			break;
+		case PINK_PETALS:
+			if (chunk.isOfTypes(x, y - 1, z, Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT, Material.FARMLAND))
+				chunk.setBlock(x, y, z, generateRandomFlowers(Material.PINK_PETALS));
 			break;
 		case GRASS:
 			if (chunk.isOfTypes(x, y - 1, z, Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
@@ -557,6 +586,9 @@ public abstract class CoverProvider extends Provider {
 		default:
 			if (odds.playOdds(generator.getSettings().spawnTrees) && !chunk.onEdgeXZ(x, z)) {
 				switch (coverageType) {
+				case CHERRY_TREE:
+					generator.treeProvider.generateNormalTree(generator, chunk, x, y, z, TreeType.CHERRY);
+					break;
 				case MINI_OAK_TRUNK:
 					generator.treeProvider.generateMiniTrunk(generator, chunk, x, y, z, TreeType.TREE);
 					break;
