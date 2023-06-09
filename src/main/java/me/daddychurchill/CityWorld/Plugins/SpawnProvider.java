@@ -245,22 +245,6 @@ public class SpawnProvider extends Provider {
 					world.setBiome(at.getBlockX(), at.getBlockZ(), biome);
 
 				// now spawn it!
-				Entity being = world.spawnEntity(at, entity);
-				if (being != null) {
-					being.setVelocity(odds.getRandomVelocity());
-
-					if (generator.getSettings().nameVillagers && entity == EntityType.VILLAGER) {
-						String beingName = generator.odonymProvider.generateVillagerName(generator, odds);
-						being.setCustomName(beingName);
-						if (generator.getSettings().showVillagersNames)
-							being.setCustomNameVisible(true);
-//						blocks.setSignPost(x, y + 11, z, BlockFace.NORTH, "Created", "named", beingName);
-//					} else {
-//						blocks.setSignPost(x, y + 11, z, BlockFace.NORTH, "Created", "a " + being.getType());
-					}
-//				} else {
-//					blocks.setSignPost(x, y + 11, z, BlockFace.NORTH, "FAILED", "to spawn", "a " + entity);
-				}
 //			} else {
 //				blocks.setSignPost(x, y + 11, z, BlockFace.NORTH, "FAILED", "to spawn", "a " + entity, "due to flood");
 			}

@@ -61,7 +61,7 @@ public abstract class CoverProvider extends Provider {
 		SHORT_FLOWERS, TALL_FLOWERS, ALL_FERNS, ALL_FLOWERS, SHORT_PLANTS, TALL_PLANTS, ALL_PLANTS, GENERAL_SAPLINGS,
 		ALL_SAPLINGS, OAK_TREES, PINE_TREES, BIRCH_TREES, JUNGLE_TREES, ACACIA_TREES, SWAMP_TREES, SHORT_TREES,
 		MEDIUM_TREES, TALL_TREES, ALL_TREES, PRARIE_PLANTS, EDIBLE_PLANTS, SHORT_MUSHROOMS, NETHER_PLANTS, DECAY_PLANTS,
-		SEA_PLANTS, SEA_CORALS
+		SEA_PLANTS, SEA_CORALS, PINK_PETALS
 	}
 
 	protected final static CoverageType[] dicecraftTrees = {
@@ -96,7 +96,7 @@ public abstract class CoverProvider extends Provider {
 			CoverageType.TALL_GRASS, CoverageType.TALL_GRASS, CoverageType.TALL_GRASS, CoverageType.TALL_FERN,
 			CoverageType.TALL_FERN, CoverageType.DANDELION, CoverageType.POPPY, CoverageType.BLUE_ORCHID,
 			CoverageType.ALLIUM, CoverageType.AZURE_BLUET, CoverageType.OXEYE_DAISY, CoverageType.RED_TULIP,
-			CoverageType.ORANGE_TULIP, CoverageType.WHITE_TULIP, CoverageType.PINK_TULIP };
+			CoverageType.ORANGE_TULIP, CoverageType.WHITE_TULIP, CoverageType.PINK_TULIP, CoverageType.PINK_PETALS };
 
 	private final static CoverageType[] EdiblePlants = { CoverageType.WHEAT, CoverageType.CARROTS, CoverageType.POTATO,
 			CoverageType.BEETROOT, CoverageType.MELON, CoverageType.PUMPKIN };
@@ -137,7 +137,7 @@ public abstract class CoverProvider extends Provider {
 			CoverageType.SHORT_OAK_TREE, CoverageType.SHORT_PINE_TREE, CoverageType.BIRCH_TREE,
 			CoverageType.JUNGLE_TREE, CoverageType.OAK_TREE, CoverageType.PINE_TREE, CoverageType.TALL_BIRCH_TREE,
 			CoverageType.TALL_JUNGLE_TREE, CoverageType.DARK_OAK_TREE, CoverageType.TALL_PINE_TREE,
-			CoverageType.ACACIA_TREE, CoverageType.SWAMP_TREE };
+			CoverageType.ACACIA_TREE, CoverageType.SWAMP_TREE, CoverageType.CHERRY_TREE };
 
 	private final static CoverageType[] ShortMushrooms = { CoverageType.BROWN_MUSHROOM, CoverageType.RED_MUSHROOM };
 
@@ -229,7 +229,6 @@ public abstract class CoverProvider extends Provider {
 		case ALL_TREES:
 			generateRandomCoverage(generator, chunk, x, y, z, AllTrees);
 			break;
-
 		case NETHER_PLANTS:
 			generateRandomCoverage(generator, chunk, x, y, z, NetherPlants);
 			break;
