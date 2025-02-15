@@ -289,7 +289,7 @@ public abstract class CoverProvider extends Provider {
 		case GRASS:
 			if (chunk.isOfTypes(x, y - 1, z, Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,
 					Material.FARMLAND))
-				chunk.setBlock(x, y, z, Material.GRASS);
+				chunk.setBlock(x, y, z, Material.GRASS_BLOCK);
 			break;
 		case FERN:
 			if (chunk.isOfTypes(x, y - 1, z, topsoil, Material.GRASS_BLOCK, Material.DIRT, Material.COARSE_DIRT,

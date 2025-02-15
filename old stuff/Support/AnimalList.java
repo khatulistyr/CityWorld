@@ -24,7 +24,7 @@ public class AnimalList extends EntityList {
 		case DONKEY:
 		case LLAMA:
 		case COW:
-		case MUSHROOM_COW:
+		case MOOSHROOM:
 		case SHEEP:
 		case PIG:
 			return 2;
@@ -81,7 +81,7 @@ public class AnimalList extends EntityList {
 		case OCELOT:
 		case PIG_ZOMBIE:
 		case POLAR_BEAR:
-		case SNOWMAN:
+		case SNOW_GOLEM:
 		case SQUID:
 		case RABBIT:
 		case WOLF:
@@ -96,7 +96,7 @@ public class AnimalList extends EntityList {
 		case DONKEY:
 		case HORSE:
 		case MULE:
-		case MUSHROOM_COW:
+		case MOOSHROOM:
 		case PARROT:
 		case PIG:
 		case SHEEP:

@@ -26,7 +26,7 @@ public final class AnimalList extends AbstractEntityList {
 		case DONKEY:
 		case LLAMA:
 		case COW:
-		case MUSHROOM_COW:
+		case MOOSHROOM:
 		case SHEEP:
 		case PIG:
 			return odds.getRandomInt(1, 3);

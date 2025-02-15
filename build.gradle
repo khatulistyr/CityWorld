@@ -23,13 +23,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.21.4-R0.1-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-bukkit:7.2.0-SNAPSHOT'
 }
 
 group = 'me.daddychurchill'
-version = '4.060'
-description = 'CityWorld'
+version = 'v1.21.4-0.1'
+description = 'CityWorld for Minecraft 1.21.4'
 
 sourceCompatibility = 17
 targetCompatibility = 17
@@ -61,7 +61,7 @@ tasks.withType(JavaCompile) {
 task copyJarToBin {
 	copy {
 	    from "build/libs/${project.name}-${project.version}.jar"
-	    into "C:/Plugins/output"
+	    into "${project.buildDir}/output"
 	    rename { String fileName ->
         	fileName.replace("-$project.version", "")
     	}

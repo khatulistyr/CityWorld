@@ -493,7 +493,7 @@ public class RealMaterial {
 	public final static MaterialData END_BRICK = define(true, false, Material.END_STONE_BRICKS);
 
 	public final static MaterialData BEETROOT_BLOCK = define(false, false, Material.BEETROOT_BLOCK);
-	public final static MaterialData GRASS_PATH = define(false, false, Material.GRASS_PATH);
+	public final static MaterialData GRASS_PATH = define(false, false, material.GRASS_BLOCK_PATH);
 	public final static MaterialData END_GATEWAY = define(false, false, Material.END_GATEWAY);
 	public final static MaterialData COMMAND_REPEATING = define(false, false, Material.COMMAND_REPEATING);
 	public final static MaterialData COMMAND_CHAIN = define(false, false, Material.COMMAND_CHAIN);

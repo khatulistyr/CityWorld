@@ -44,7 +44,7 @@ class SurfaceProvider_SnowDunes extends SurfaceProvider_Flooded {
 			// ok create a snowman above the snow
 			int manY = chunk.findFirstEmptyAbove(x, floodY - 1, z, floodY + 6);
 			if (chunk.isType(x, manY - 1, z, Material.SNOW_BLOCK))
-				generator.spawnProvider.spawnVagrant(generator, chunk, odds, x, manY + 1, z, EntityType.SNOWMAN,
+				generator.spawnProvider.spawnVagrant(generator, chunk, odds, x, manY + 1, z, EntityType.SNOW_GOLEM,
 						EntityType.POLAR_BEAR);
 		}
 	}
