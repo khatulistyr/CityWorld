@@ -10,6 +10,12 @@ This version of **CityWorld** has been updated to support **Minecraft 1.21.4**.
 
 ---
 
+## Wiki
+https://dev.bukkit.org/projects/cityworld/pages \
+Very outdated. Message [me](https://github.com/khatulistyr) for support, as long as I'm still maintaining this plugin for my server.
+
+---
+
 ## Build Guide
 
 To build this project, follow these steps:
